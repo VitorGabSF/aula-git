@@ -1,0 +1,6 @@
+@import url(IMG/bolsonabo.jpg);
+
+body{
+    background-image: url(IMG/bolsonabo.jpg);
+    background-size: cover;
+}
