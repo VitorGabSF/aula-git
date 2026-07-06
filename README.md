@@ -8,3 +8,4 @@ COMMITS
         - "FEAT: ......"
         - "CHORE: ....."
         - "FIX: ......."
+
