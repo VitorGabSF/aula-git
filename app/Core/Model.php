@@ -4,8 +4,9 @@ namespace Core;
 
 use PDO;
 
-class Model{
+abstract class Model{
     public static function pegarBanco(): PDO {
         return Database::conectar();
     }
 }
+
