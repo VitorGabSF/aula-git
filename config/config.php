@@ -1,12 +1,13 @@
 <?php
 
-return [
+return[
     'app_name' => 'ControlShop',
     'base_folder' => '/aula-git/',
-    'db' => [
+    'db' =>[
         'host'      => 'localhost',
         'dbname'    => 'controlshop',
         'user'      => 'root',
-        'password'  => ''
+        'password' => ''
     ]
 ];
+

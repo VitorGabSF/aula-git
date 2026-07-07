@@ -8,3 +8,4 @@ PADRÕES DE COMMITS
         - "FEAT: ......"
         - "CHORE: ....."
         - "FIX: ......."
+
