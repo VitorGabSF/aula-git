@@ -8,7 +8,7 @@ class Controller{
 
         $viewFile = __DIR__ . '/../Views/' . $name . '.php';
 
-        if(!file_exists($viewFile)){
+        if (!file_exists($viewFile)) {
             http_response_code(404);
             exit('Página não existe');
         }

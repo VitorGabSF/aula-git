@@ -2,23 +2,20 @@
 
 namespace Core;
 
-class Router
-{
+class Router {
     public array $rotas = [];
 
-    public function add(string $metodo, string $uri, string $controller, ?string $permissao = null): void
-    {
+    public function add( string $metodo, string $uri, string $controller, ?string $permissao = null ) : void {
 
         $this->rotas[] = [
-            'metodo'     => strtoupper($metodo),
-            'uri'        => $uri,
-            'controller' => $controller,
-            'permissao'  => $permissao
+            'metodo'        => strtoupper($metodo),
+            'uri'           => $uri,
+            'controller'    => $controller,
+            'permissao'     => $permissao
         ];
     }
 
-    public function dispatch(): void
-    {
+    public function dispatch() : void {
         $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?: '/';
 
         $caminhoBase = rtrim(BASE_URL, '/');
