@@ -5,6 +5,7 @@ namespace Core;
 class Router {
     public array $rotas = [];
 
+<<<<<<< HEAD
     public function add( string $metodo, string $uri, string $controller, string $permissao) : void {
         $this->rotas[] = [
             'metodo' => strtoupper($metodo),
@@ -14,6 +15,19 @@ class Router {
         ];
     }
     public function dispatch() : void{
+=======
+    public function add( string $metodo, string $uri, string $controller, ?string $permissao = null ) : void {
+
+        $this->rotas[] = [
+            'metodo'        => strtoupper($metodo),
+            'uri'           => $uri,
+            'controller'    => $controller,
+            'permissao'     => $permissao
+        ];
+    }
+
+    public function dispatch() : void {
+>>>>>>> 50d1407df68b73d2a3095849c0eecba70e4d2566
         $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?: '/';
 
         $caminhoBase = rtrim(BASE_URL, '/');
@@ -21,6 +35,7 @@ class Router {
         if($caminhoBase !== '' && str_starts_with($uri, $caminhoBase)) {
             $uri = substr($uri, strlen($caminhoBase));
         }
+<<<<<<< HEAD
         $uri = $uri === '' ? '/' : $uri;
 
         $metodo = strtoupper($_SERVER ['REQUEST_METHOD']);
@@ -53,5 +68,17 @@ class Router {
         }
         http_response_code(404);
         echo 'sem página irmão';
+=======
+
+        $uri = $uri === '' ? '/' : $uri;
+
+        $metodo = strtoupper($_SERVER['REQUEST_METHOD']);
+
+        foreach ($this->rotas as $rota) {
+            if ($rota['metodo'] !== $metodo || $rota['uri'] !== $uri) {
+                continue;
+            }
+        }
+>>>>>>> 50d1407df68b73d2a3095849c0eecba70e4d2566
     }
 }
