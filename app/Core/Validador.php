@@ -7,7 +7,7 @@ class Validador {
         return trim((string) $valor) !== '';
     }
 
-    public static function email(?string $valor) : boll {
+    public static function email(?string $valor) : bool {
         return filter_var($valor, FILTER_VALIDATE_EMAIL) !== false;
     }
 }
