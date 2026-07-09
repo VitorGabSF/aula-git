@@ -32,6 +32,32 @@ class Router {
             if ($rota['metodo'] !== $metodo || $rota['uri'] !== $uri) {
                 continue;
             }
+
+            if ( $rota['permissao'] ! == null) {
+                exit;
+            }
+
+            [$controllerNome, $metodoNome] = explode( '@', $rota['controller'], 2)
+
+            $controllerClass = 'Controllers\\' . $contrellerNome
+
+            if (!class_exists($controllerClass)) {
+                http_response_code(500);
+                exit('Não tem essa controller');
+            }
+
+            $controller = new $controllerClass();
+
+            if (!method_exists($controller, $metodoNome)){
+                http_response_code(500);
+                exit('Não tem essa metodo');
+            }
+
+            $controller = new $metodoNome();
+            return;
         }
+
+        http_response_code(404);
+        echo 'sem página irmão'
     }
 }
