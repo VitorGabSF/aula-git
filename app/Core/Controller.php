@@ -3,20 +3,21 @@
 namespace Core;
 
 class Controller{
-    public function view(string $name, array $data = []) : void{
+    public function view(string $name, array $data = []) : void {
         extract($data);
 
-        $viewFile = __DIR__ . '/../Views' . $name . '.php';
+        $viewFile = __DIR__ . '/../Views/' . $name . '.php';
 
-        if (!file_exists($viewFile)){
+        if (!file_exists($viewFile)) {
             http_response_code(404);
             exit('Página não existe');
         }
 
         require $viewFile;
-        }
+    }
 
-    public function redirecionar(string $caminho) : void{
-        header('location: ' . BASE_URL . ltrim($caminho, '/'));
+    public function redirecionar(string $caminho) : void {
+        header('Location: ' . BASE_URL . ltrim($caminho, '/'));
+        exit;
     }
 }
