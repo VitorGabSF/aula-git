@@ -2,34 +2,34 @@
 
 namespace Core;
 
-Class Auth{
-    public static function login( array $usuario) : void {
-        sesseion_regenerate_id(true);
+class Auth {
+    public static function login( array $usuario ) : void {
+        session_start();
+        session_regenerate_id(true);
 
         $_SESSION['usuario_autenticado'] = [
-            'id'         => (int) $usuario['id'],
-            'nome'       => $usuario['nome'],
-            'email'      => $usuario['email'],
-            'cargo'       => $usuario['cargo'],
-            'permissao'  => $usuario['permissao'] ?? []
-        ]
+            'id'        => (int) $usuario['id'],
+            'nome'      => $usuario['nome'],
+            'email'     => $usuario['email'],
+            'cargo'     => $usuario['cargo'],
+            'permissao' => $usuario['permissao'] ?? []
+        ];
     }
-
 
     public static function usuario() : ?array {
-        return $_SESSION{'usuario_autenticado'} ?? null;
+        return $_SESSION['usuario_autenticado'] ?? null;
     }
 
-    public static function id() : ?int {
-        return isset($_SESSION['usuario_autenticado']['id'] ) ? (int) $_SESSION['usuario_autenticado']['id'] : null;
+    public static function id(): ?int {
+        return isset($_SESSION['usuario_autenticado']['id']) ? (int) $_SESSION['usuario_autenticado']['id'] : null;
     }
 
-    public static function check() : bool {
-        return isset($_SESSION ['usuario_autenticado']);
+    public static function checar() : bool {
+        return isset($_SESSION['usuario_autenticado']);
     }
 
     public static function convidado() : bool {
-        if !self::checar();
+        return !self::checar();
     }
 
     public static function pode(string $permissao) : bool {
@@ -44,7 +44,7 @@ Class Auth{
         );
     }
 
-    public static function temCargo(string $cargo) : bool{
+    public static function temCargo(string $cargo) : bool {
         return self::checar() && in_array(
             $cargo,
             $_SESSION['usuario_autenticado']['cargo'] ?? [],
@@ -54,8 +54,8 @@ Class Auth{
 
     public static function requerLogin() : void {
         if(!self::checar()) {
-            self::flash('erro', 'faz login ae');
-            header('location: ' . BASE_URL . 'login');
+            self::flash('erro', 'Faz login ae');
+            header('Location: ' . BASE_URL . 'login');
             exit();
         }
     }
@@ -64,7 +64,7 @@ Class Auth{
         self::requerLogin();
 
         if(!self::pode($permissao)) {
-            header('location: ' . BASE_URL . '403');
+            header('Location: ' . BASE_URL . '403');
             exit;
         }
     }
@@ -73,6 +73,8 @@ Class Auth{
         $_SESSION = [];
         session_regenerate_id(true);
         session_destroy();
-
     }
+
+
+
 }
