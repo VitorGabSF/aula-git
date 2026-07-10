@@ -17,4 +17,37 @@ class AuthController extends Controller {
             'sucesso'   => Auth::pegarFlash('sucesso')
         ]);
     }
+
+    public function login() : void {
+        $email = trim($_POST['email'] ?? '');
+        $senha = $_POST['senha'] ?? '';
+
+        if (!Auth::validarCsrf($_POST['csrf_token'] ?? null)) {
+            http_response_code(419);
+            exit('CSRF inválido');
+        }
+
+        if ($email === '' || $senha === ''){
+            Auth::flash('erro', 'informar email e senha');
+            $this->redirecionar('/login');
+        }
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            Auth::flash('erro', 'informe um email válido');
+            $this->redirecionar('/login');
+        }
+    }
+
+    public function logout() : void {
+        Auth::requerLogin();
+
+        if (!Auth::validarCsrf($_POST['csrf_token'] ?? null)) {
+            http_response_code(419);
+            exit('CSRF inválido');
+        }
+
+        Auth::logout();
+        Auth::flash('sucesso', 'logout realizado');
+        $this->redirecionar('/login');
+    }
 }
