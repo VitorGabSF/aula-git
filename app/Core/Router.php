@@ -33,7 +33,7 @@ class Router {
                 continue;
             }
 
-            if ( $rota['permissao'] !== null) {
+            if ( $rota['permissao'] !== null ) {
                 exit;
             }
 
@@ -47,8 +47,8 @@ class Router {
             }
 
             $controller = new $controllerClass();
-
-            if (!method_exists($controller, $metodoNome)){
+            
+            if (!method_exists($controller, $metodoNome)) {
                 http_response_code(500);
                 exit('Não tem esse método');
             }
