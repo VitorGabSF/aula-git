@@ -75,5 +75,25 @@ class Auth {
         session_destroy();
     }
 
-    
+    public static function flash(string $tipo, string $mensagem) : void {
+        $_SESSION['flash'][$tipo] = $mensagem;
+    }
+
+    public static function pegarFlash(string $tipo) : ?string {
+        $mensagem = $_SESSION['flash'][$tipo] ?? [];
+        unset($_SESSION['flash'][$tipo]);
+        return $mensagem;
+    }
+
+    public static function csrfToken() : string {
+        if (empty($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
+        return $_SESSION['csrf_token'];
+    }
+
+    public static function validarCsrf(string $token) : bool {
+        $guardar = $_SESSION['csrf_token'] ?? '';
+        return $token !== null && $guardar !== '' && hash_equals($guardar, $token);
+    }
 }

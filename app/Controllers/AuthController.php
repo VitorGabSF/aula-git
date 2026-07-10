@@ -12,8 +12,8 @@ class AuthController extends Controller {
         }
 
         $this->view('auth/login', [
-            'erro'    => Auth::pegarflash('erro')
-            'sucesso' => Auth::pegarflash('sucesso')
+            'erro'      => Auth::pegarFlash('erro'),
+            'sucesso'   => Auth::pegarFlash('sucesso')
         ]);
     }
 }
