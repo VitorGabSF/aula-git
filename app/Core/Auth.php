@@ -89,10 +89,11 @@ class Auth {
         if (empty($_SESSION['csrf_token'])) {
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         }
+        var_dump($_SESSION);
         return $_SESSION['csrf_token'];
     }
 
-    public static function validarCsrf(string $token) : bool {
+    public static function validarCsrf(?string $token) : bool {
         $guardar = $_SESSION['csrf_token'] ?? '';
         return $token !== null && $guardar !== '' && hash_equals($guardar, $token);
     }

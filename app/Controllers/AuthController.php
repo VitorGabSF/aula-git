@@ -1,6 +1,6 @@
 <?php
 
-namespace Controller;
+namespace Controllers;
 
 use Core\Auth;
 use Core\Controller;
@@ -21,6 +21,8 @@ class AuthController extends Controller {
     public function login() : void {
         $email = trim($_POST['email'] ?? '');
         $senha = $_POST['senha'] ?? '';
+        
+        var_dump($_POST);
 
         if (!Auth::validarCsrf($_POST['csrf_token'] ?? null)) {
             http_response_code(419);
@@ -34,7 +36,7 @@ class AuthController extends Controller {
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             Auth::flash('erro', 'informe um email válido');
-            $this->redirecionar('/login');
+            $this->view('/login');
         }
     }
 
