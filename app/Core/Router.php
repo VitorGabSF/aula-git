@@ -40,11 +40,11 @@ class Router
                 continue;
             }
 
-            if ($rota['permissao'] !== null) {
+            if ( $rota['permissao'] !== null ) {
                 exit;
             }
 
-            [$controllerNome, $metodoNome] = explode('@', $rota['controller'], 2);
+            [$controllerNome, $metodoNome] = explode( '@', $rota['controller'], 2);
 
             $controllerClass = 'Controllers\\' . $controllerNome;
 
@@ -54,9 +54,10 @@ class Router
             }
 
             $controller = new $controllerClass();
-
+            
             if (!method_exists($controller, $metodoNome)) {
-                exit('Não tem esse methodo');
+                http_response_code(500);
+                exit('Não tem esse método');
             }
 
             $controller->$metodoNome();
