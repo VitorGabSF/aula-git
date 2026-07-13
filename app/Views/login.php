@@ -1,6 +1,5 @@
 <?php
 use Core\Auth;
-$autenticador = new Auth();
 ?>
 
 <!DOCTYPE html>
@@ -85,7 +84,7 @@ $autenticador = new Auth();
     <div class="login-card">
         <h2>Login</h2>
         <form action="<?php BASE_URL ?>login" method="POST">
-            <input type="hidden" name="csrf_token" value="<?php htmlspecialchars($autenticador->csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
+            <input type="hidden" name="csrf_token" value="<?php htmlspecialchars(Auth::csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
             <div class="input-group">
                 <label for="email">E-mail</label>
                 <input type="email" id="email" name="email" placeholder="seu@email.com" required>
