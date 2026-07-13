@@ -14,3 +14,7 @@ $config = require __DIR__.'/config/config.php';
 
 define('BASE_URL', $config['base_folder']);
 
+$rotas = new Core\Router();
+require_once __DIR__ . '/app/Routes/rotas.php';
+$rotas->dispatch();
+
