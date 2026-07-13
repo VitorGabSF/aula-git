@@ -1,6 +1,6 @@
 <?php
 
-namespace Controller;
+namespace Controllers;
 
 use Core\Auth;
 use Core\Controller;
@@ -11,25 +11,22 @@ class AuthController extends Controller {
             $this->redirecionar('/dashboard');
         }
 
-        $this->view('auth/login', [
-            'erro' => Auth::pegarFlah('erro'),
-            'sucesso' => Auth::pegarFlash('sucesso')
+        $this->view('/login', [
+            'erro'      => Auth::pegarFlash('erro'),
+            'sucesso'   => Auth::pegarFlash('sucesso')
         ]);
     }
 
     public function login() : void {
-        $email = trim($_POST['email'] ?? '');
-        $senha = $_POST['senha'] ?? '';
-
         if (!Auth::validarCsrf($_POST['csrf_token'] ?? null)) {
             http_response_code(419);
             exit('CSRF inválido');
         }
 
-        if ($email === '' || $senha === ''){
-            Auth::flash('erro', 'informe um email válido');
-            $this->redirecionar('/login');
-        }
+        $email = trim($_POST['email'] ?? '');
+        $senha = $_POST['senha'] ?? '';
+        
+        echo $email . " - " . $senha;
     }
 
     public function logout() : void {
@@ -40,10 +37,8 @@ class AuthController extends Controller {
             exit('CSRF inválido');
         }
 
-
         Auth::logout();
         Auth::flash('sucesso', 'logout realizado');
         $this->redirecionar('/login');
     }
-
 }

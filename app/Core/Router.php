@@ -6,7 +6,6 @@ class Router {
     public array $rotas = [];
 
     public function add( string $metodo, string $uri, string $controller, ?string $permissao = null ) : void {
-
         $this->rotas[] = [
             'metodo'        => strtoupper($metodo),
             'uri'           => $uri,
