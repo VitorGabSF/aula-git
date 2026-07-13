@@ -4,7 +4,6 @@ namespace Core;
 
 class Auth {
     public static function login( array $usuario ) : void {
-        session_start();
         session_regenerate_id(true);
 
         $_SESSION['usuario_autenticado'] = [
@@ -82,14 +81,13 @@ class Auth {
     public static function pegarFlash(string $tipo) : ?string {
         $mensagem = $_SESSION['flash'][$tipo] ?? [];
         unset($_SESSION['flash'][$tipo]);
-        return $mensagem;
+        return is_string($mensagem) ? $mensagem : null;
     }
 
     public static function csrfToken() : string {
         if (empty($_SESSION['csrf_token'])) {
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         }
-        var_dump($_SESSION);
         return $_SESSION['csrf_token'];
     }
 
