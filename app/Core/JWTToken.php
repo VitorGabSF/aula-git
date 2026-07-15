@@ -15,8 +15,8 @@ class JWTToken {
             'typ' => 'JWT'
         ];
 
-        header64 = self::base64UrlEncode(json_encode($header));
-        payload64 = self::base64UrlEncode(json_encode($payload));
+        $header64 = self::base64UrlEncode(json_encode($header));
+        $payload64 = self::base64UrlEncode(json_encode($payload));
 
         $conteudo = $header64 . '.' . $payload64;
 
@@ -25,9 +25,8 @@ class JWTToken {
         return $conteudo . '.' . self::base64UrlEncode($assinatura);
     }
 
-    public static function decode(string $token, string $segredo) : array
-    {
-        if (strlen($segredo) <32) {
+    public static function decode(string $token, string $segredo) : array {
+        if (strlen($segredo) < 32) {
             throw new RuntimeException('Chave menor que 32');
         }
 
@@ -47,7 +46,7 @@ class JWTToken {
         $payload = json_decode(self::base64UrlDecode($payload64), true);
 
         if (!is_array($header) || !is_array($payload)) {
-
+            throw new RuntimeException('Token inválido');
         }
 
         if (($header['alg'] ?? '') !== 'HS256') {
@@ -75,16 +74,18 @@ class JWTToken {
 
     public static function base64UrlDecode(string $valor) : string {
         $valor = strtr($valor, '-_', '+/');
-        $resto = srtlen($valor) % 4;
+        $resto = strlen($valor) % 4;
 
         if ($resto !== 0) {
             $valor .= str_repeat('=', 4 - $resto);
         }
 
-        $resulta = base64_decode($valor, true);
+        $resultado = base64_decode($valor, true);
 
         if ($resultado === false) {
             throw new RuntimeException('Token inválido');
         }
+
+        return $resultado;
     }
 }

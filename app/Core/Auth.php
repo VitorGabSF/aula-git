@@ -12,17 +12,30 @@ class Auth {
 
     public static function login( array $usuario ) : void {
 
-        $config = 
+        $config = self::configJWT();
+        $agora = time();
 
-        session_regenerate_id(true);
-
-        $_SESSION['usuario_autenticado'] = [
-            'id'        => (int) $usuario['id'],
+        $payload = [
+            'sub'        => (int) $usuario['id'],
             'nome'      => $usuario['nome'],
             'email'     => $usuario['email'],
             'cargo'     => $usuario['cargo'],
-            'permissao' => $usuario['permissao'] ?? []
+            'permissao' => $usuario['permissao'] ?? [],
+            'iat'       => $agora,
+            'exp'       => $agora + (int) $config['ttl']
         ];
+
+        $token = JWTToken::encode($payload, $config['secret']);
+
+        setcookie($config['cookie_name'], $token, [
+            'expires' => $payload['exp'],
+            'path' => BASE_URL,
+            'secure' => (bool) $config['cookie_secure'],
+            'httponly' => true,
+            'samesite' => 'Lax'
+        ]);
+
+        session_regenerate_id(true);
     }
 
     public static function usuario() : ?array {
