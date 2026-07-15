@@ -17,8 +17,8 @@ class Usuario extends Model {
             return null;
         }
 
-        $usuario['cargo'];
-        $usuario['permissao'];
+        $usuario['cargo'] = self::buscaCargo((int) $usuario['id']);
+        $usuario['permissao']= self::buscaPermissao((int) $usuario['id']);
 
         return $usuario;
     }

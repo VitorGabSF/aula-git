@@ -4,10 +4,15 @@ namespace Controllers;
 
 use Core\Auth;
 use Core\Controller;
+use Core\Validador;
+use Core\HashSenha;
+use Models\Usuario;
 
-class AuthController extends Controller {
+class AuthController extends Controller
+{
 
-    public function loginForm() : void {
+    public function loginForm(): void
+    {
         if (Auth::checar()) {
             $this->redirecionar('/dashboard');
         }
@@ -18,7 +23,8 @@ class AuthController extends Controller {
         ]);
     }
 
-    public function login() : void {
+    public function login(): void
+    {
         if (!Auth::validarCsrf($_POST['csrf_token'] ?? null)) {
             http_response_code(419);
             exit('CSRF inválido');
@@ -26,11 +32,31 @@ class AuthController extends Controller {
 
         $email = trim($_POST['email'] ?? '');
         $senha = $_POST['senha'] ?? '';
-        
-        echo $email . " - " . $senha;
+
+        if (!Validador::required($email) || !Validador::required($senha)) {
+            Auth::flash('erro', 'Manda email e senha');
+            $this->redirecionar('/login');
+        }
+
+        if (!Validador::email($email)) {
+            Auth::flash('erro', 'email Inválido');
+            $this->redirecionar('/login');
+        }
+
+        $usuario = Usuario::buscaEmail($email);
+
+        if (!$usuario || !$usuario['ativo'] || !HashSenha::verificar($senha, $usuario['senha_hash'])) {
+            Auth::flash('erro', 'Email ou senha Inválidos');
+            $this->redirecionar('/login');
+        }
+
+        Auth::login($usuario);
+        Auth::flash('sucesso', 'login com sucesso');
+        $this->redirecionar('/dashboard');
     }
 
-    public function logout() : void {
+    public function logout(): void
+    {
         Auth::requerLogin();
 
         if (!Auth::validarCsrf($_POST['csrf_token'] ?? null)) {
