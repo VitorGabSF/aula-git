@@ -3,7 +3,17 @@
 namespace Core;
 
 class Auth {
+
+    public static function configJWT() : array {
+        $config = require __DIR__ . '/../../config/config.php';
+
+        return $config['jwt'];
+    }
+
     public static function login( array $usuario ) : void {
+
+        $config = 
+
         session_regenerate_id(true);
 
         $_SESSION['usuario_autenticado'] = [
