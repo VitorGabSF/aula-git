@@ -9,7 +9,7 @@ class HashSenha {
         $salt = bin2hex(random_bytes(16));
 
         $hash = hash_pbkdf2(
-            'sha256', 
+            'sha256',
             $senha,
             $salt,
             self::ITERACOES,
@@ -22,7 +22,7 @@ class HashSenha {
     public static function verificar(string $senha, string $hashSalvo) : bool {
         $partes = explode('$', $hashSalvo);
 
-        if(count($partes) !== 3) {
+        if (count($partes) !== 3) {
             return false;
         }
 
@@ -33,7 +33,7 @@ class HashSenha {
         ] = $partes;
 
         $hashCalculado = hash_pbkdf2(
-            'sha256', 
+            'sha256',
             $senha,
             $salt,
             (int) $iteracoes,

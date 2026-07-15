@@ -57,22 +57,22 @@ class Auth {
         $config = self::configJWT();
         $token = $_COOKIE[$config['cookie_name']] ?? null;
 
-        if (!$token){
+        if (!$token) {
             return null;
         }
 
-        try{
-            $payload = JWTToken::decode($token, $config['secret']);
+        try {
+            $payload = JWTTOken::decode($token, $config['secret']);
 
             return [
-                'id'        => (int) $payload['sub'],
-                'nome'      => $payload['nome'] ?? '',
-                'email'     => $payload['email'] ?? '',
-                'cargo'     => $payload['cargo'] ?? '',
-                'permissao' => $payload['permissao'] ?? ''
+                'id'           => (int) $payload['sub'],
+                'nome'          => $payload['nome'] ?? '',
+                'email'         => $payload['email'] ?? '',
+                'cargo'         => $payload['cargo'] ?? '',
+                'permissao'         => $payload['permissao'] ?? ''
             ];
         }
-        catch(Throwable $erro) {
+        catch (Throwable $erro) {
             self::removerCookie();
             return null;
         }
@@ -93,7 +93,7 @@ class Auth {
     public static function pode(string $permissao) : bool {
         $usuario = self::usuario();
 
-        return $usuario != null && in_array(
+        return $usuario !== null && in_array(
             $permissao,
             $usuario['permissao'],
             true
@@ -103,7 +103,7 @@ class Auth {
     public static function temCargo(string $cargo) : bool {
         $usuario = self::usuario();
 
-        return $usuario != null && in_array(
+        return $usuario !== null && in_array(
             $cargo,
             $usuario['cargo'],
             true
@@ -146,6 +146,7 @@ class Auth {
         if (empty($_SESSION['csrf_token'])) {
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         }
+
         return $_SESSION['csrf_token'];
     }
 
