@@ -6,6 +6,19 @@ use Core\Model;
 use PDO;
 
 class Usuario extends Model {
+
+    public static function listarTodos() : array {
+
+    }
+
+    public static function listarCargos() : array {
+        
+    }
+
+    public static function criarUsuario(array $dados) : int {
+        
+    }
+
     public static function buscaEmail( string $email ) : ?array {
         $stmt = parent::pegarBanco()->prepare( 'SELECT id, nome, senha_hash, email, ativo FROM usuarios WHERE email = :e LIMIT 1' );
 
