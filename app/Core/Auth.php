@@ -14,7 +14,6 @@ class Auth {
 
     public static function removerCookie() : void {
         $config = self::configJWT();
-
         setcookie($config['cookie_name'], '', [
             'expires' => time() - 3600,
             'path' => BASE_URL,
@@ -153,7 +152,6 @@ class Auth {
 
     public static function validarCsrf(?string $token) : bool {
         $guardar = $_SESSION['csrf_token'] ?? '';
-
         return is_string($token) && $token !== '' && is_string($guardar) && hash_equals($guardar, $token);
     }
 }

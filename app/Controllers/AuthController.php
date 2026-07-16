@@ -8,9 +8,11 @@ use Core\Validador;
 use Core\HashSenha;
 use Models\Usuario;
 
-class AuthController extends Controller {
+class AuthController extends Controller
+{
 
-    public function loginForm() : void {
+    public function loginForm(): void
+    {
         if (Auth::checar()) {
             $this->redirecionar('/dashboard');
         }
@@ -21,7 +23,8 @@ class AuthController extends Controller {
         ]);
     }
 
-    public function login() : void {
+    public function login(): void
+    {
         if (!Auth::validarCsrf($_POST['csrf_token'] ?? null)) {
             http_response_code(419);
             exit('CSRF inválido');
@@ -52,7 +55,8 @@ class AuthController extends Controller {
         $this->redirecionar('/dashboard');
     }
 
-    public function logout() : void {
+    public function logout(): void
+    {
         Auth::requerLogin();
 
         if (!Auth::validarCsrf($_POST['csrf_token'] ?? null)) {
