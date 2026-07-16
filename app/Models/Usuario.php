@@ -1,14 +1,35 @@
 <?php
 
-namespace models;
+namespace Models;
 
-use core\Model;
+use Core\Model;
 use PDO;
 
 class Usuario extends Model {
-    public static function buscarEmail(string $email) : array{
-        $stmt = parent::pegarBanco()->prepare('SELECT id, nome, email, senha FROM usuarios WHERE email = :e LIMIT 1');
-        $stmt->execute(['e' => $email]);
+
+    public static function listarTodos() : array {
+        $stmt = parent::pegarBanco()( 'SELECT id, nome, criado_em, email, ativo FROM usuarios ' );
+        $stmt -> execute();
+        return $stmt-> fetchAll();
+    }
+    
+    public static function listarCargos() : array {
+        $stmt = parent::pegarBanco()->prepare('SELECT id,nome,descricao FROM cargos');
+        $stmt -> execute();
+        return $stmt-> fetchAll();
+
+    }
+    public static function criarUsuario() : array {
+        $stmt = parent::pegarBanco()->prepare('SELECT id, nome, criado_em, email, ativo FROM usuarios');
+        $stmt -> execute();
+        return $stmt-> fetchAll();
+    }
+
+
+    public static function buscaEmail( string $email ) : ?array {
+        $stmt = parent::pegarBanco()->prepare( 'SELECT id, nome, senha_hash, email, ativo FROM usuarios WHERE email = :e LIMIT 1' );
+
+        $stmt->execute( [ 'e' => $email ] );
 
         $usuario = $stmt->fetch();
 
@@ -16,13 +37,30 @@ class Usuario extends Model {
             return null;
         }
 
-        $usuario['cargo'];
-        $usuario['permissao'];
+        $usuario['cargo'] = self::buscaCargo((int) $usuario['id']);
+        $usuario['permissao']= self::buscaPermissao((int) $usuario['id']);
+
+        return $usuario;
     }
 
-    public static function buscarCargo( int $idUsuario) : array {
-        $stmt = parent::pegarBanco()->prepare('SELECT cargos.nome FROM cargos INNER JOIN usuario_cargo ON usuario_cargo.cargo_id = cargo.id WHERE usuario_cargo.usuario_id = :usid ORDER BY cargo.nome ');
-        $stmt->execute(['usid' => $idUsuario]);
+    public static function buscaCargo( int $idUsuario ) : array {
+        $stmt = parent::pegarBanco()->prepare( ' SELECT cargos.nome FROM cargos INNER JOIN usuario_cargo ON usuario_cargo.cargo_id = cargos.id WHERE usuario_cargo.usuario_id = :usid ORDER BY cargos.nome ' );
+
+        $stmt->execute( [ 'usid' => $idUsuario ]);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    public static function buscaPermissao( int $idUsuario ) : array {
+        $stmt = parent::pegarBanco()->prepare(
+        'SELECT permissoes.nome FROM permissoes
+        INNER JOIN cargo_permissao
+        ON cargo_permissao.permissao_id = permissoes.id
+        INNER JOIN usuario_cargo
+        ON usuario_cargo.cargo_id = cargo_permissao.cargo_id
+        WHERE usuario_cargo.usuario_id = :usid
+        ORDER BY permissoes.nome' );
+
+        $stmt->execute( [ 'usid' => $idUsuario ]);
         return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
 }

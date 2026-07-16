@@ -2,29 +2,89 @@
 
 namespace Core;
 
-class Auth {
-    public static function login( array $usuario ) : void {
-        session_regenerate_id(true);
+use Throwable;
 
-        $_SESSION['usuario_autenticado'] = [
-            'id'        => (int) $usuario['id'],
+class Auth {
+
+    public static function configJWT() : array {
+        $config = require __DIR__ . '/../../config/config.php';
+
+        return $config['jwt'];
+    }
+
+    public static function removerCookie() : void {
+        $config = self::configJWT();
+
+        setcookie($config['cookie_name'], '', [
+            'expires' => time() - 3600,
+            'path' => BASE_URL,
+            'secure' => (bool) $config['cookie_secure'],
+            'httponly' => true,
+            'samesite' => 'Lax'
+        ]);
+
+        unset($_COOKIE[$config['cookie_name']]);
+    }
+
+    public static function login( array $usuario ) : void {
+
+        $config = self::configJWT();
+        $agora = time();
+
+        $payload = [
+            'sub'        => (int) $usuario['id'],
             'nome'      => $usuario['nome'],
             'email'     => $usuario['email'],
             'cargo'     => $usuario['cargo'],
-            'permissao' => $usuario['permissao'] ?? []
+            'permissao' => $usuario['permissao'] ?? [],
+            'iat'       => $agora,
+            'exp'       => $agora + (int) $config['ttl']
         ];
+
+        $token = JWTToken::encode($payload, $config['secret']);
+
+        setcookie($config['cookie_name'], $token, [
+            'expires' => $payload['exp'],
+            'path' => BASE_URL,
+            'secure' => (bool) $config['cookie_secure'],
+            'httponly' => true,
+            'samesite' => 'Lax'
+        ]);
+
+        session_regenerate_id(true);
     }
 
     public static function usuario() : ?array {
-        return $_SESSION['usuario_autenticado'] ?? null;
+        $config = self::configJWT();
+        $token = $_COOKIE[$config['cookie_name']] ?? null;
+
+        if (!$token) {
+            return null;
+        }
+
+        try {
+            $payload = JWTTOken::decode($token, $config['secret']);
+
+            return [
+                'id'           => (int) $payload['sub'],
+                'nome'          => $payload['nome'] ?? '',
+                'email'         => $payload['email'] ?? '',
+                'cargo'         => $payload['cargo'] ?? '',
+                'permissao'         => $payload['permissao'] ?? ''
+            ];
+        }
+        catch (Throwable $erro) {
+            self::removerCookie();
+            return null;
+        }
     }
 
     public static function id(): ?int {
-        return isset($_SESSION['usuario_autenticado']['id']) ? (int) $_SESSION['usuario_autenticado']['id'] : null;
+        return self::usuario()['id'] ?? '';
     }
 
     public static function checar() : bool {
-        return isset($_SESSION['usuario_autenticado']);
+        return self::usuario() !== null;
     }
 
     public static function convidado() : bool {
@@ -32,21 +92,21 @@ class Auth {
     }
 
     public static function pode(string $permissao) : bool {
-        if (!self::checar()) {
-            return false;
-        }
+        $usuario = self::usuario();
 
-        return in_array(
+        return $usuario !== null && in_array(
             $permissao,
-            $_SESSION['usuario_autenticado']['permissao'] ?? [],
+            $usuario['permissao'],
             true
         );
     }
 
     public static function temCargo(string $cargo) : bool {
-        return self::checar() && in_array(
+        $usuario = self::usuario();
+
+        return $usuario !== null && in_array(
             $cargo,
-            $_SESSION['usuario_autenticado']['cargo'] ?? [],
+            $usuario['cargo'],
             true
         );
     }
@@ -69,9 +129,8 @@ class Auth {
     }
 
     public static function logout() : void {
-        $_SESSION = [];
+        self::removerCookie();
         session_regenerate_id(true);
-        session_destroy();
     }
 
     public static function flash(string $tipo, string $mensagem) : void {
@@ -88,11 +147,13 @@ class Auth {
         if (empty($_SESSION['csrf_token'])) {
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         }
+
         return $_SESSION['csrf_token'];
     }
 
     public static function validarCsrf(?string $token) : bool {
         $guardar = $_SESSION['csrf_token'] ?? '';
-        return $token !== null && $guardar !== '' && hash_equals($guardar, $token);
+
+        return is_string($token) && $token !== '' && is_string($guardar) && hash_equals($guardar, $token);
     }
 }
