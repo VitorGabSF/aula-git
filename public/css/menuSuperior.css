@@ -1,0 +1,30 @@
+.menuSuperior{
+    background-color: #0066cc;
+
+    width: 100%;
+    padding: 24px 40px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: aliceblue;
+    font-weight: 600;
+    display: flex;
+    flex-direction: row;
+
+    & a{
+        transition: all .2s ease-in;
+    }
+
+    & a:hover{
+        color: rgb(166, 166, 249);
+    }
+}
+.caixaOpcoes{
+    display: flex;
+    width: 90%;
+    justify-content: space-around;
+}
+
+.caixaSair{
+    display: flex;
+    justify-content: end;
+    width: 10%;
+}
