@@ -16,8 +16,8 @@ class Usuario extends Model {
         if (!$usuario) {
             return null;
         }
-        $usuario['cargo'];
-        $usuario['permissao'];
+        $usuario['cargo'] = self::buscaCargo((int) $usuario['id']);
+        $usuario['permissao'] = self::buscaCargo((int) $usuario['id']);
 
         return $usuario;
     }

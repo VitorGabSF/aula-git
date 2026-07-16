@@ -3,7 +3,6 @@
 namespace Core;
 
 use Throwable;
- 
 class Auth {
  
     public static function configJWT() : array {
@@ -11,11 +10,19 @@ class Auth {
  
         return $config['jwt'];
     }
- 
-    public static function removerCookie() : void{
+
+    public static function removerCookie() : void {
         $config = self::configJWT();
 
-        setcookie($config['cookie_name'], '')
+        setcookie($config['cookie_name'], '', [
+            'expires' => time() - 3600,
+            'path' => BASE_URL,
+            'secure' => (bool) $config['cookie_secure'],
+            'httponly' => true,
+            'samesite' => 'Lax'
+        ]);
+
+        unset($_COOKIE[$config['cookie_name']]);
     }
 
     public static function login( array $usuario ) : void {
@@ -49,23 +56,23 @@ class Auth {
     public static function usuario() : ?array {
         $config = self::configJWT();
         $token = $_COOKIE[$config['cookie_name']] ?? null;
- 
-        if (!$token){
+
+        if (!$token) {
             return null;
         }
- 
-        try{
-            $payload = JWTToken::decode($token, $config['secret']);
- 
+
+        try {
+            $payload = JWTTOken::decode($token, $config['secret']);
+
             return [
-                'id'        => (int) $payload['sub'],
-                'nome'      => $payload['nome'] ?? '',
-                'email'     => $payload['email'] ?? '',
-                'cargo'     => $payload['cargo'] ?? '',
-                'permissao' => $payload['permissao'] ?? ''
+                'id'           => (int) $payload['sub'],
+                'nome'          => $payload['nome'] ?? '',
+                'email'         => $payload['email'] ?? '',
+                'cargo'         => $payload['cargo'] ?? '',
+                'permissao'         => $payload['permissao'] ?? ''
             ];
         }
-        catch(Throwable $erro) {
+        catch (Throwable $erro) {
             self::removerCookie();
             return null;
         }
@@ -122,7 +129,7 @@ class Auth {
  
     public static function logout() : void {
         self::removerCookie();
-        session_destroy();
+        session_regenerate_id(true);
     }
  
     public static function flash(string $tipo, string $mensagem) : void {
@@ -139,6 +146,7 @@ class Auth {
         if (empty($_SESSION['csrf_token'])) {
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         }
+
         return $_SESSION['csrf_token'];
     }
  
