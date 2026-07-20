@@ -10,7 +10,7 @@ spl_autoload_register(function ($class) {
     }
 });
 
-$config = require __DIR__.'/config/config.php';
+$config = require __DIR__ . '/Config/aplicativo.php';
 
 define('BASE_URL', $config['base_folder']);
 
